@@ -7,7 +7,7 @@ This package will provide automatically parse and configure you Laravel applicat
 
 ## Installation
 
-Require this package with composer. It is recommended to only require the package for development.
+Require this package with composer.
 
 ```shell
 composer require alexwijn/laravel-database-url
