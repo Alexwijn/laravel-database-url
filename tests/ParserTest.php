@@ -12,15 +12,16 @@ class ParserTest extends TestCase
 {
     public function testDatabase()
     {
-        putenv('DATABASE_URL=mysql://username:password@dbsrv:1000/test');
+        putenv('DATABASE_URL=mariadb://user:testing-password@production-mariadb:1000/production');
 
         $this->app['db.parser']->process();
 
         $this->assertEquals('mysql', config('database.connections.mysql.driver'));
-        $this->assertEquals('dbsrv', config('database.connections.mysql.host'));
-        $this->assertEquals(1000, config('database.connections.mysql.port'));
-        $this->assertEquals('username', config('database.connections.mysql.username'));
-        $this->assertEquals('password', config('database.connections.mysql.password'));
+        $this->assertEquals('production-mariadb', config('database.connections.mysql.host'));
+        $this->assertEquals('1000', config('database.connections.mysql.port'));
+        $this->assertEquals('production', config('database.connections.mysql.database'));
+        $this->assertEquals('user', config('database.connections.mysql.username'));
+        $this->assertEquals('testing-password', config('database.connections.mysql.password'));
     }
 
     public function testRedis()
