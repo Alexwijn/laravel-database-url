@@ -28,5 +28,6 @@ Alexwijn\DatabaseUrl\ServiceProvider::class,
 At the moment we support the following configurations:
 
 - *DATABASE_URL* - Eg. mysql://username:password@localhost/database
+- *DATABASE_URL* - Eg. mariadb://username:password@localhost/database
 - *DATABASE_URL* - Eg. postgres://username:password@localhost/database
 - *REDIS_URL* - Eg. redis://redis:password@localhost/0

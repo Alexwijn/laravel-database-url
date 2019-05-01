@@ -50,10 +50,7 @@ class Parser
         }
 
         if ($url = parse_url($config)) {
-            if (isset($url['scheme']) && $url['scheme'] === 'mysql') {
-                config(["database.connections.$default.driver" => 'mysql']);
-            }
-
+            config(["database.connections.$default.driver" => 'mysql']);
             if (isset($url['scheme']) && $url['scheme'] === 'postgres') {
                 config(["database.connections.$default.driver" => 'pgsql']);
             }
