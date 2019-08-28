@@ -89,18 +89,22 @@ class Parser
         if ($url = parse_url($config)) {
             if (isset($url['host'])) {
                 config(['database.redis.default.host' => $url['host']]);
+                config(['database.redis.cache.host' => $url['host']]);
             }
 
             if (isset($url['path'])) {
                 config(['database.redis.default.database' => substr($url['path'], 1)]);
+                config(['database.redis.cache.database' => substr($url['path'], 1)]);
             }
 
             if (isset($url['port'])) {
                 config(['database.redis.default.port' => $url['port']]);
+                config(['database.redis.cache.port' => $url['port']]);
             }
 
             if (isset($url['pass'])) {
                 config(['database.redis.default.password' => $url['pass']]);
+                config(['database.redis.cache.password' => $url['pass']]);
             }
         }
     }
