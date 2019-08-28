@@ -10,6 +10,18 @@ use Orchestra\Testbench\TestCase;
  */
 class ParserTest extends TestCase
 {
+    public function testRedis()
+    {
+        putenv('REDIS_URL=redis://username:password@redissrv:1000/5');
+
+        $this->app['db.parser']->process();
+
+        $this->assertEquals('redissrv', config('database.redis.default.host'));
+        $this->assertEquals(1000, config('database.redis.default.port'));
+        $this->assertEquals(5, config('database.redis.default.database'));
+        $this->assertEquals('password', config('database.redis.default.password'));
+    }
+
     public function testDatabase()
     {
         putenv('DATABASE_URL=mariadb://user:testing-password@production-mariadb:1000/production');
@@ -24,16 +36,13 @@ class ParserTest extends TestCase
         $this->assertEquals('testing-password', config('database.connections.mysql.password'));
     }
 
-    public function testRedis()
+    public function testElasticsearch()
     {
-        putenv('REDIS_URL=redis://username:password@redissrv:1000/5');
+        putenv('ELASTICSEARCH=http://production-elasticsearch:1000/');
 
         $this->app['db.parser']->process();
 
-        $this->assertEquals('redissrv', config('database.redis.default.host'));
-        $this->assertEquals(1000, config('database.redis.default.port'));
-        $this->assertEquals(5, config('database.redis.default.database'));
-        $this->assertEquals('password', config('database.redis.default.password'));
+        $this->assertEquals('production-elasticsearch:1000', config('scout_elastic.client.hosts.0'));
     }
 
     protected function getPackageProviders($app)
