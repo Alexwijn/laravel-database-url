@@ -10,21 +10,25 @@ use Illuminate\Support\Str;
 class Parser
 {
     /** @var string */
+    protected $redis;
+
+    /** @var string */
     protected $database;
 
     /** @var string */
-    protected $redis;
+    protected $elasticsearch;
 
     /**
      * Parser constructor.
      *
-     * @param string $database
-     * @param string $redis
+     * @param  string  $database
+     * @param  string  $redis
      */
-    public function __construct(string $database, string $redis)
+    public function __construct(string $redis, string $database, string $elasticsearch)
     {
-        $this->database = $database;
         $this->redis = $redis;
+        $this->database = $database;
+        $this->elasticsearch = $elasticsearch;
     }
 
     /**
@@ -35,6 +39,54 @@ class Parser
         foreach (get_class_methods($this) as $method) {
             if (Str::startsWith($method, 'parse')) {
                 $this->{$method}();
+            }
+        }
+    }
+
+    /**
+     * Parse the ELASTICSEARCH into laravel environment variables (Scout).
+     */
+    public function parseElasticsearch()
+    {
+        if (empty($config = getenv($this->elasticsearch))) {
+            return;
+        }
+
+        if ($url = parse_url($config)) {
+            if (isset($url['host'])) {
+                config(['scout_elastic.client.hosts' => [$url['host'] . ':' . ($url['port'] ?? 9200)]]);
+            }
+        }
+    }
+
+    /**
+     * Parse the REDIS_URL into laravel environment variables.
+     */
+    protected function parseRedis()
+    {
+        if (empty($config = getenv($this->redis))) {
+            return;
+        }
+
+        if ($url = parse_url($config)) {
+            if (isset($url['host'])) {
+                config(['database.redis.default.host' => $url['host']]);
+                config(['database.redis.cache.host' => $url['host']]);
+            }
+
+            if (isset($url['path'])) {
+                config(['database.redis.default.database' => substr($url['path'], 1)]);
+                config(['database.redis.cache.database' => substr($url['path'], 1)]);
+            }
+
+            if (isset($url['port'])) {
+                config(['database.redis.default.port' => $url['port']]);
+                config(['database.redis.cache.port' => $url['port']]);
+            }
+
+            if (isset($url['pass'])) {
+                config(['database.redis.default.password' => $url['pass']]);
+                config(['database.redis.cache.password' => $url['pass']]);
             }
         }
     }
@@ -73,38 +125,6 @@ class Parser
 
             if (isset($url['pass'])) {
                 config(["database.connections.$default.password" => $url['pass']]);
-            }
-        }
-    }
-
-    /**
-     * Parse the REDIS_URL into laravel environment variables.
-     */
-    protected function parseRedis()
-    {
-        if (empty($config = getenv($this->redis))) {
-            return;
-        }
-
-        if ($url = parse_url($config)) {
-            if (isset($url['host'])) {
-                config(['database.redis.default.host' => $url['host']]);
-                config(['database.redis.cache.host' => $url['host']]);
-            }
-
-            if (isset($url['path'])) {
-                config(['database.redis.default.database' => substr($url['path'], 1)]);
-                config(['database.redis.cache.database' => substr($url['path'], 1)]);
-            }
-
-            if (isset($url['port'])) {
-                config(['database.redis.default.port' => $url['port']]);
-                config(['database.redis.cache.port' => $url['port']]);
-            }
-
-            if (isset($url['pass'])) {
-                config(['database.redis.default.password' => $url['pass']]);
-                config(['database.redis.cache.password' => $url['pass']]);
             }
         }
     }
