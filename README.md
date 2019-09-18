@@ -31,3 +31,4 @@ At the moment we support the following configurations:
 - *DATABASE_URL* - Eg. mariadb://username:password@localhost/database
 - *DATABASE_URL* - Eg. postgres://username:password@localhost/database
 - *REDIS_URL* - Eg. redis://redis:password@localhost/0
+- *ELASTICSEARCH_URL* - Eg. tcp://localhost:9200
